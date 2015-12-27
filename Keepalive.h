@@ -7,7 +7,6 @@ class Keepalive : public Serializable
 public:
 	bool isAlive;
 	Keepalive();
-	~Keepalive();
 	
 	bool IsAlive() const;
 	size_t GetSize() const;

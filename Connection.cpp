@@ -10,7 +10,7 @@
 /**
  * @brief Initializes the socket descriptor to a previously opened socket descriptor
  *        and updates the last keepalive time
- * @param socketDesc: previously opened socket descriptor
+ * @param clientDesc: previously opened client socket descriptor
  */
 Connection::Connection(int clientDesc):
 	clientDesc(clientDesc),
@@ -21,7 +21,9 @@ Connection::Connection(int clientDesc):
 }
 
 /**
- * @brief Stub
+ * @brief Unregisters the connection so that it
+ * no longer accepts broadcast anything. Also
+ * closes the connection.
  */
 Connection::~Connection()
 {
@@ -30,18 +32,27 @@ Connection::~Connection()
 }
 
 
+/**
+ * @brief Getter for the output.
+ * @return the output network buffer
+ */
 NetworkBuffer& Connection::GetOutput()
 {
 	return this->output;
 }
 
+/**
+ * @brief Getter for the input.
+ * @return the input network buffer
+ */
 NetworkBuffer& Connection::GetInput()
 {
 	return this->input;
 }
 
 /**
- * @brief Attempts to read and parse all the input and send all the output
+ * @brief Attempts to read and parse all the input
+ * and send all the output.
  */
 void Connection::Task()
 {
@@ -51,8 +62,8 @@ void Connection::Task()
 
 
 /**
- * @brief Attempts to read the data waiting in the socket input queue
- * Transfers that data into the input queue and attempts to parse it.
+ * @brief Attempts to read the data waiting in the socket input buffer
+ * and parse the it.
  */
 void Connection::ReceiveInput()
 {
@@ -180,6 +191,8 @@ void Connection::SendOutput()
 
 /**
  * @brief Determines if the connection has closed
+ * Delays 1 cycle before actually closing the connection
+ * so that a reason may be sent for the closure.
  * @return If the connection has not closed
  */
 bool Connection::IsOpen()
@@ -187,24 +200,28 @@ bool Connection::IsOpen()
 	const int timeoutPeriod = 10;
 	time_t now;
 	time(&now);
-	bool alreadyClosed = this->closed;
+	bool open = !this->closed;
 	bool timedOut = now >= (this->lastKeepalive + timeoutPeriod);
 	
 	this->closed = this->closed || timedOut;
 	
-	if (this->closed)
+	if (open)
 	{
-		ServerError error;
-		error.error = "Connection timed out.";
+		if (timedOut)
+		{
+			ServerError error;
+			error.error = "Connection timed out.";
+			
+			this->output << error;
+		}
 		
-		this->output << error;
 	}
 	
-	return !alreadyClosed;
+	return open;
 }
 
 /**
- * @brief Set the variable indicating if the connection should close to true;
+ * @brief Set the variable indicating if the connection should close to true
  */
 void Connection::Close()
 {	
@@ -263,6 +280,10 @@ bool Connection::OnKeepalive()
 	return valid;
 }
 
+/**
+ * @brief 
+ * @return If the attempt to parse was successful
+ */
 bool Connection::OnChat()
 {
 	Chat chat;

@@ -2,18 +2,11 @@
 #include "NetworkIds.h"
 
 /**
- * @brief Initializes the value of isAlive to false
+ * @brief Initializes the value of isAlive to true
  */
 Keepalive::Keepalive():
 	Serializable(NetworkId::KEEPALIVE),
 	isAlive(true)
-{
-}
-
-/**
- * @brief Stub
- */
-Keepalive::~Keepalive()
 {
 }
 

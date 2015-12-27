@@ -52,7 +52,6 @@ void OnConnection(int clientDesc)
 int main(int argc, char** argv)
 {
 	int socketDesc = socket(AF_INET, SOCK_STREAM, 0);
-	socklen_t sockLen;
 	struct sockaddr_in server;
 	struct sockaddr_in client;
 	const unsigned short PORT = 8080; 
@@ -77,7 +76,6 @@ int main(int argc, char** argv)
 			{
 				//Accept and incoming connection
 				puts("Listening.");
-				sockLen = sizeof(struct sockaddr_in);
 				
 				struct timeval timeout = {
 					.tv_sec = 0,
@@ -90,6 +88,7 @@ int main(int argc, char** argv)
 				
 				while (!quit)
 				{
+					socklen_t sockLen = sizeof(struct sockaddr_in);
 					int clientDesc = accept4(socketDesc, (struct sockaddr *)&client, &sockLen, SOCK_NONBLOCK);
 					if (clientDesc != -1)
 					{
@@ -115,9 +114,9 @@ int main(int argc, char** argv)
 	
 	for (unsigned int i = 0; i < threads.size(); i++)
 	{
-		std::thread& thread_ = threads.at(i);
-		thread_.join();
+		threads.at(i).join();
 	}
+	threads.clear();
 	
 	puts("Closing socket.");
 	close(socketDesc);
