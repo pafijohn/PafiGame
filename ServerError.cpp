@@ -12,7 +12,7 @@ void ServerError::Deserialize(NetworkBuffer& networkBuffer)
 
 size_t ServerError::GetSize() const
 {
-	return sizeof(NetworkId_t) + sizeof(size_t);
+	return sizeof(NetworkId_t) + sizeof(unsigned int);
 }
 
 void ServerError::Serialize(NetworkBuffer& networkBuffer) const

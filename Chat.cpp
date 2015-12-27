@@ -15,8 +15,7 @@ Chat::Chat():
  */
 size_t Chat::GetSize() const
 {
-	auto size = this->message.size();
-	return sizeof(NetworkId_t) + sizeof(size);
+	return sizeof(NetworkId_t) + sizeof(unsigned int);
 }
 
 /**
@@ -34,8 +33,5 @@ void Chat::Serialize(NetworkBuffer& networkBuffer) const
  */
 void Chat::Deserialize(NetworkBuffer& networkBuffer)
 {
-	int i;
-	networkBuffer.Pop(nullptr, sizeof(NetworkId_t));
-	networkBuffer >> this->message;
-	networkBuffer >> i;
+	networkBuffer >> this->dummy >> this->message;
 }

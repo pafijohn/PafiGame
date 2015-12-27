@@ -32,7 +32,7 @@ bool Keepalive::IsAlive() const
  */
 size_t Keepalive::GetSize() const
 {
-	return sizeof(this->isAlive);
+	return sizeof(NetworkId_t) + sizeof(this->isAlive);
 }
 
 /**

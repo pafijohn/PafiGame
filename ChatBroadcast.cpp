@@ -12,8 +12,7 @@ void ChatBroadcast::Deserialize(NetworkBuffer& networkBuffer)
 
 size_t ChatBroadcast::GetSize() const
 {
-	auto size = this->message.size();
-	return sizeof(NetworkId_t) + sizeof(size);
+	return sizeof(NetworkId_t) + sizeof(unsigned int);
 }
 
 void ChatBroadcast::Serialize(NetworkBuffer& networkBuffer) const
